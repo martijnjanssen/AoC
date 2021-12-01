@@ -3,15 +3,15 @@ package main
 import (
 	"strconv"
 
-	"github.com/martijnjanssen/aoc/pkg/input"
+	"github.com/martijnjanssen/aoc/pkg/helper"
+
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	ds := []int{}
 
-	r := input.OpenReader("input.txt")
-	input.ReadLines(r, func(l string) {
+	helper.DownloadAndRead(1, func(l string) {
 		v, err := strconv.Atoi(l)
 		if err != nil {
 			logrus.Fatalf("Unable to read line: %s", err)

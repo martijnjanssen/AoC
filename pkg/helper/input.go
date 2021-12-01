@@ -1,4 +1,4 @@
-package input
+package helper
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func OpenReader(file string) *bufio.Reader {
+func openReader(file string) *bufio.Reader {
 	_, err := os.Stat(file)
 	if os.IsNotExist(err) {
 		log.Fatalf("File \"%s\" does not exist", file)
@@ -24,7 +24,7 @@ func OpenReader(file string) *bufio.Reader {
 	return bufio.NewReader(f)
 }
 
-func ReadLines(r *bufio.Reader, fn func(string)) {
+func readLines(r *bufio.Reader, fn func(string)) {
 	for {
 		line, err := r.ReadString('\n')
 		if len(line) == 0 && err != nil {
