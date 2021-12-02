@@ -18,6 +18,7 @@ var (
 
 var (
 	horizontal = 0
+	aim        = 0
 	depth      = 0
 )
 
@@ -39,12 +40,13 @@ func main() {
 		switch a.command {
 		case FORWARD:
 			horizontal += a.amount
+			depth += aim * a.amount
 			break
 		case UP:
-			depth -= a.amount
+			aim -= a.amount
 			break
 		case DOWN:
-			depth += a.amount
+			aim += a.amount
 			break
 		}
 	}
