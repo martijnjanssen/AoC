@@ -16,3 +16,8 @@ func DownloadAndRead(day int, fn func(string)) {
 	r := openReader("input.txt")
 	readLines(r, fn)
 }
+
+func ReadTestInput(_ int, fn func(string)) {
+	r := openReader("input.test")
+	readLines(r, fn)
+}
