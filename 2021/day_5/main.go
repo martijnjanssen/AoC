@@ -36,21 +36,23 @@ func (l *line) getPoints() []*point {
 		for _, i := range makeRange(l.a.x, l.b.x) {
 			ps = append(ps, &point{i, l.a.y})
 		}
-		return ps
-	}
-	if l.a.x == l.b.x {
+	} else if l.a.x == l.b.x {
 		for _, i := range makeRange(l.a.y, l.b.y) {
 			ps = append(ps, &point{l.a.x, i})
 		}
-		return ps
 	}
+	return ps
+}
 
-	ys := makeRange(l.a.y, l.b.y)
-	xs := makeRange(l.a.x, l.b.x)
-	for i := range ys {
-		ps = append(ps, &point{xs[i], ys[i]})
+func (l *line) getDiagonalPoints() []*point {
+	ps := []*point{}
+	if l.a.y != l.b.y && l.a.x != l.b.x {
+		ys := makeRange(l.a.y, l.b.y)
+		xs := makeRange(l.a.x, l.b.x)
+		for i := range ys {
+			ps = append(ps, &point{xs[i], ys[i]})
+		}
 	}
-
 	return ps
 }
 
@@ -72,14 +74,23 @@ func main() {
 		grid[i] = make([]int, maxV+1)
 	}
 
-	// Write add lines to grid
+	// Write add non-diagonal lines to grid
 	for _, l := range lines {
-		ps := l.getPoints()
-		for _, p := range ps {
+		for _, p := range l.getPoints() {
 			grid[p.y][p.x] += 1
 		}
 	}
+	fmt.Printf("Answer is: %d\n", calculateCriticals(grid))
 
+	for _, l := range lines {
+		for _, p := range l.getDiagonalPoints() {
+			grid[p.y][p.x] += 1
+		}
+	}
+	fmt.Printf("Answer is: %d\n", calculateCriticals(grid))
+}
+
+func calculateCriticals(grid [][]int) int {
 	c := 0
 	for y := range grid {
 		for x := range grid[y] {
@@ -88,8 +99,7 @@ func main() {
 			}
 		}
 	}
-
-	fmt.Printf("Answer is: %d\n", c)
+	return c
 }
 
 func parseLine(l string) []int {
