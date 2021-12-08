@@ -10,8 +10,9 @@ import (
 // Middle of the window doesn't have to be considered,
 // the middle of the window is the same for both instances.
 func main() {
-	ds := []int{}
+	defer helper.Time()()
 
+	ds := []int{}
 	helper.DownloadAndRead(1, func(l string) {
 		v, _ := strconv.Atoi(l)
 		ds = append(ds, v)

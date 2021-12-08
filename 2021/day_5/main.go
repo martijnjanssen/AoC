@@ -57,6 +57,8 @@ func (l *line) getDiagonalPoints() []*point {
 }
 
 func main() {
+	defer helper.Time()()
+
 	lines := []*line{}
 	maxV := 0
 

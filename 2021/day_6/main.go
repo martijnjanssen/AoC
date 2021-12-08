@@ -9,8 +9,9 @@ import (
 )
 
 func main() {
-	fs := make([]int, 9)
+	defer helper.Time()()
 
+	fs := make([]int, 9)
 	helper.DownloadAndRead(6, func(l string) {
 		ds := strings.Split(l, ",")
 		for _, d := range ds {

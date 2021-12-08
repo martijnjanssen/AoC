@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	defer helper.Time()()
+
 	vs := [][]int{}
 	size := -1
 	helper.DownloadAndRead(3, func(l string) {

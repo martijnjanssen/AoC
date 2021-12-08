@@ -13,9 +13,10 @@ var numbers map[string]int
 var rNumbers map[int]string
 
 func main() {
+	defer helper.Time()()
+
 	occurrences := 0
 	acc := 0
-
 	helper.DownloadAndRead(8, func(l string) {
 		numbers = map[string]int{}
 		rNumbers = map[int]string{}

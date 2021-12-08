@@ -57,6 +57,8 @@ func (b *board) getSum() int {
 }
 
 func main() {
+	defer helper.Time()()
+
 	numbers := []int{}
 	bs := []*board{}
 	firstLine := true

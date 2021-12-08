@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	defer helper.Time()()
+
 	ps := []int{}
 	sum := 0
 	helper.DownloadAndRead(7, func(l string) {

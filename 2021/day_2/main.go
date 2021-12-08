@@ -28,8 +28,9 @@ type action struct {
 }
 
 func main() {
-	as := []action{}
+	defer helper.Time()()
 
+	as := []action{}
 	helper.DownloadAndRead(2, func(l string) {
 		s := strings.Split(l, " ")
 		a, _ := strconv.Atoi(s[1])
