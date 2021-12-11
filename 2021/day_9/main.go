@@ -1,21 +1,25 @@
-package main
+package day_9
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 var rows, cols int
 var grid = [][]int{}
 var basins = []int{}
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (a int, b int) {
 	lows := 0
 	helper.DownloadAndRead(9, func(l string) {
 		row := []int{}
@@ -35,7 +39,7 @@ func main() {
 			}
 		}
 	}
-	fmt.Printf("Answer is: %d\n", lows)
+	a = lows
 
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
@@ -45,7 +49,8 @@ func main() {
 		}
 	}
 	sort.Sort(sort.Reverse(sort.IntSlice(basins)))
-	fmt.Printf("Answer is: %d\n", basins[0]*basins[1]*basins[2])
+	b = basins[0] * basins[1] * basins[2]
+	return
 }
 
 func findBasinSize(r int, c int) int {

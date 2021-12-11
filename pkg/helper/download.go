@@ -10,7 +10,7 @@ import (
 )
 
 func loadSessionCookie() (string, error) {
-	f, err := os.ReadFile("../../session.ck")
+	f, err := os.ReadFile("../session.ck")
 	if err != nil {
 		return "", err
 	}
@@ -30,7 +30,7 @@ func downloadInput(sessionCookie string, year int, day int, force bool, output s
 
 	file, err := os.OpenFile(output, flags, 0666)
 	if os.IsExist(err) {
-		fmt.Printf("File %q already exists, not attempting download\n", output)
+		// fmt.Printf("File %q already exists, not attempting download\n", output)
 		return nil
 	} else if err != nil {
 		return err

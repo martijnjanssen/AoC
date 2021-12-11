@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -9,15 +11,16 @@ func DownloadAndRead(day int, fn func(string)) {
 	if err != nil {
 		logrus.Fatalf("unable to load session cookie: %s", err)
 	}
-	err = downloadInput(sCk, 2021, day, false, "input.txt")
+	filename := fmt.Sprintf("day_%d/input.txt", day)
+	err = downloadInput(sCk, 2021, day, false, filename)
 	if err != nil {
 		logrus.Fatalf("unable to download input: %s", err)
 	}
-	r := openReader("input.txt")
+	r := openReader(filename)
 	readLines(r, fn)
 }
 
-func ReadTestInput(_ int, fn func(string)) {
-	r := openReader("input.test")
+func ReadTestInput(day int, fn func(string)) {
+	r := openReader(fmt.Sprintf("day_%d/input.test", day))
 	readLines(r, fn)
 }

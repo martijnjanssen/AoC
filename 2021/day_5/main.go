@@ -1,11 +1,11 @@
-package main
+package day_5
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 type point struct {
@@ -56,9 +56,13 @@ func (l *line) getDiagonalPoints() []*point {
 	return ps
 }
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (a int, b int) {
 	lines := []*line{}
 	maxV := 0
 
@@ -82,14 +86,15 @@ func main() {
 			grid[p.y][p.x] += 1
 		}
 	}
-	fmt.Printf("Answer is: %d\n", calculateCriticals(grid))
+	a = calculateCriticals(grid)
 
 	for _, l := range lines {
 		for _, p := range l.getDiagonalPoints() {
 			grid[p.y][p.x] += 1
 		}
 	}
-	fmt.Printf("Answer is: %d\n", calculateCriticals(grid))
+	b = calculateCriticals(grid)
+	return
 }
 
 func calculateCriticals(grid [][]int) int {

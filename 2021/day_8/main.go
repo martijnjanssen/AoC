@@ -1,20 +1,24 @@
-package main
+package day_8
 
 import (
-	"fmt"
 	"math"
 	"sort"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 var numbers map[string]int
 var rNumbers map[int]string
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (int, int) {
 	occurrences := 0
 	acc := 0
 	helper.DownloadAndRead(8, func(l string) {
@@ -76,8 +80,7 @@ func main() {
 		}
 	})
 
-	fmt.Printf("Answer is: %d\n", occurrences)
-	fmt.Printf("Answer is: %d\n", acc)
+	return occurrences, acc
 }
 
 func storeNums(n int, s string) {

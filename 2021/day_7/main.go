@@ -1,17 +1,21 @@
-package main
+package day_7
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (a int, b int) {
 	ps := []int{}
 	sum := 0
 	helper.DownloadAndRead(7, func(l string) {
@@ -29,7 +33,7 @@ func main() {
 	for _, p := range ps {
 		fuel += helper.Abs(helper.Diff(pos, p))
 	}
-	fmt.Printf("Answer is: %d\n", fuel)
+	a = fuel
 
 	pos = sum / len(ps)
 	fuel = 0
@@ -37,5 +41,6 @@ func main() {
 		d := helper.Abs(helper.Diff(pos, p))
 		fuel += (d * (d + 1)) / 2
 	}
-	fmt.Printf("Answer is: %d\n", fuel)
+	b = fuel
+	return
 }

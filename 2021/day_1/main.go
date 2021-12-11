@@ -1,29 +1,37 @@
-package main
+package day_1
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 // Middle of the window doesn't have to be considered,
 // the middle of the window is the same for both instances.
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (a int, b int) {
 	ds := []int{}
 	helper.DownloadAndRead(1, func(l string) {
 		v, _ := strconv.Atoi(l)
 		ds = append(ds, v)
 	})
 
-	inc := 0
+	for i := 1; i < len(ds)-1; i++ {
+		if ds[i-1] < ds[i+1] {
+			a++
+		}
+	}
 	for i := 1; i < len(ds)-2; i++ {
 		if ds[i-1] < ds[i+2] {
-			inc++
+			b++
 		}
 	}
 
-	fmt.Printf("Increased is: %d\n", inc)
+	return
 }

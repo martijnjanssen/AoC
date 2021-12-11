@@ -1,11 +1,11 @@
-package main
+package day_10
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 var (
@@ -16,10 +16,14 @@ var (
 	stack []string
 )
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
-	r := 0
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (int, int) {
+	d := 0
 	scores := []int{}
 	helper.DownloadAndRead(10, func(l string) {
 		cs := strings.Split(l, "")
@@ -35,7 +39,7 @@ func main() {
 				if matchings[c] == stack[len(stack)-1] { // check top of stack
 					stack = stack[0 : len(stack)-1] // pop stack
 				} else {
-					r += illegalScores[c]
+					d += illegalScores[c]
 					error = true
 					break L
 				}
@@ -53,8 +57,6 @@ func main() {
 
 	})
 
-	fmt.Printf("Answer is: %d\n", r)
-
 	sort.Ints(scores)
-	fmt.Printf("Answer is: %d\n", scores[len(scores)/2])
+	return d, scores[len(scores)/2]
 }

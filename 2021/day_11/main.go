@@ -1,12 +1,14 @@
-package main
+package day_11
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
+
+var grid = [][]pos{}
 
 type pos struct {
 	r int
@@ -14,11 +16,13 @@ type pos struct {
 	e int
 }
 
-var grid = [][]pos{}
+type run struct{}
 
-func main() {
-	defer helper.Time()()
+func GetRunner() runner.Runner {
+	return &run{}
+}
 
+func (r *run) Run() (a int, b int) {
 	helper.DownloadAndRead(11, func(l string) {
 		row := []pos{}
 		for _, s := range strings.Split(l, "") {
@@ -67,13 +71,14 @@ func main() {
 		}
 
 		if i == 99 {
-			fmt.Printf("Answer is: %d\n", flashes)
+			a = flashes
 		}
 		if flashes-prevFlashes == len(grid)*len(grid[0]) {
-			fmt.Printf("Answer is: %d\n", i+1)
+			b = i + 1
 			break
 		}
 	}
+	return
 }
 
 func getNeighbors(r, c int) []*pos {

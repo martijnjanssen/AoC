@@ -1,4 +1,4 @@
-package main
+package day_3
 
 import (
 	"fmt"
@@ -6,11 +6,16 @@ import (
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (int, int) {
 	vs := [][]int{}
 	size := -1
 	helper.DownloadAndRead(3, func(l string) {
@@ -25,11 +30,10 @@ func main() {
 		vs = append(vs, is)
 	})
 
-	first(vs, size)
-	second(vs, size)
+	return first(vs, size), second(vs, size)
 }
 
-func first(vs [][]int, size int) {
+func first(vs [][]int, size int) int {
 	r := make([]int, size)
 	for _, v := range vs {
 		for i := 0; i < len(r); i++ {
@@ -54,17 +58,17 @@ func first(vs [][]int, size int) {
 	iString = strings.ReplaceAll(iString, "0", "1")
 	iString = strings.ReplaceAll(iString, "2", "0")
 
-	fmt.Printf("Answer is: %d\n", binaryStringToInt(rString)*binaryStringToInt(iString))
+	return binaryStringToInt(rString) * binaryStringToInt(iString)
 }
 
-func second(vs [][]int, size int) {
+func second(vs [][]int, size int) int {
 	cs := filter(vs, 0, func(c int) bool { return c >= 0 })
 	us := filter(vs, 0, func(c int) bool { return c < 0 })
 
 	c := binaryArrayToString(cs[0])
 	u := binaryArrayToString(us[0])
 
-	fmt.Printf("Answer is: %d\n", binaryStringToInt(c)*binaryStringToInt(u))
+	return binaryStringToInt(c) * binaryStringToInt(u)
 }
 
 func filter(vs [][]int, index int, compFn func(int) bool) [][]int {
@@ -93,7 +97,7 @@ func filter(vs [][]int, index int, compFn func(int) bool) [][]int {
 		}
 	}
 
-	return filter(r, index + 1, compFn)
+	return filter(r, index+1, compFn)
 }
 
 func binaryArrayToString(bs []int) string {

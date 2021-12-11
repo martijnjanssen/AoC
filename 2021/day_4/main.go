@@ -1,11 +1,11 @@
-package main
+package day_4
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
 type board struct {
@@ -56,9 +56,13 @@ func (b *board) getSum() int {
 	return sum
 }
 
-func main() {
-	defer helper.Time()()
+type run struct{}
 
+func GetRunner() runner.Runner {
+	return &run{}
+}
+
+func (r *run) Run() (int, int) {
 	numbers := []int{}
 	bs := []*board{}
 	firstLine := true
@@ -87,23 +91,24 @@ func main() {
 		b.numbers = append(b.numbers, ns)
 	})
 
-	solve(numbers, bs)
+	return solve(numbers, bs)
 }
 
-func solve(numbers []int, bs []*board) {
+func solve(numbers []int, bs []*board) (a, b int) {
 	bingos := 0
 	for _, n := range numbers {
-		for _, b := range bs {
-			b.markNumber(n)
-			if b.checkBingo() {
+		for _, board := range bs {
+			board.markNumber(n)
+			if board.checkBingo() {
 				if bingos == 0 {
-					fmt.Printf("First bingo: %d\n", b.getSum()*n)
+					a = board.getSum() * n
 				}
 				if bingos == len(bs)-1 {
-					fmt.Printf("Last bingo: %d\n", b.getSum()*n)
+					b = board.getSum() * n
 				}
 				bingos++
 			}
 		}
 	}
+	return
 }
