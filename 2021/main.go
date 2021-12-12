@@ -7,6 +7,7 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_1"
 	"github.com/martijnjanssen/aoc/2021/day_10"
 	"github.com/martijnjanssen/aoc/2021/day_11"
+	"github.com/martijnjanssen/aoc/2021/day_12"
 	"github.com/martijnjanssen/aoc/2021/day_3"
 	"github.com/martijnjanssen/aoc/2021/day_4"
 	"github.com/martijnjanssen/aoc/2021/day_5"
@@ -33,6 +34,7 @@ func main() {
 		day_9.GetRunner(),
 		day_10.GetRunner(),
 		day_11.GetRunner(),
+		day_12.GetRunner(),
 	}
 
 	defer helper.Time()()
