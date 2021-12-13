@@ -14,7 +14,7 @@ func GetRunner() runner.Runner {
 }
 
 var (
-	caves = map[string]*cave{}
+	caves map[string]*cave
 )
 
 type cave struct {
@@ -37,6 +37,7 @@ func (c *cave) addNext(c1 *cave) {
 }
 
 func (r *run) Run() (a int, b int) {
+	caves = map[string]*cave{}
 	helper.DownloadAndRead(12, func(l string) {
 		es := strings.Split(l, "-")
 		for _, e := range es {
@@ -50,8 +51,8 @@ func (r *run) Run() (a int, b int) {
 
 	paths := []*path{{c: caves["start"], visited: ""}}
 	for len(paths) > 0 {
-		tip := paths[0]
-		paths = paths[1:]
+		tip := paths[len(paths)-1]
+		paths = paths[:len(paths)-1]
 
 		for i := range tip.c.next {
 			if len(tip.c.next[i].next) == 0 {
@@ -80,7 +81,7 @@ func (p *path) visitCave(c *cave) (*path, bool) {
 		return &path{c, p.visited + "," + c.name, p.double}, true // Allow small non-visited caves
 	}
 
-	if strings.Contains(p.visited, c.name) && p.double == "" {
+	if p.double == "" && strings.Contains(p.visited, c.name) {
 		return &path{c, p.visited, c.name}, true // Allow double visit for one small cave
 	}
 

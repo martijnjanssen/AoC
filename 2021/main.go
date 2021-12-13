@@ -8,6 +8,7 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_10"
 	"github.com/martijnjanssen/aoc/2021/day_11"
 	"github.com/martijnjanssen/aoc/2021/day_12"
+	"github.com/martijnjanssen/aoc/2021/day_13"
 	"github.com/martijnjanssen/aoc/2021/day_3"
 	"github.com/martijnjanssen/aoc/2021/day_4"
 	"github.com/martijnjanssen/aoc/2021/day_5"
@@ -17,7 +18,6 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_9"
 	"github.com/martijnjanssen/aoc/pkg/helper"
 	"github.com/martijnjanssen/aoc/pkg/runner"
-	"github.com/martijnjanssen/aoc/2021/day_13"
 )
 
 func main() {
@@ -41,8 +41,19 @@ func main() {
 
 	defer helper.Time()()
 	for i, r := range days[1:] {
-		t := time.Now()
+		start := time.Now()
 		a, b := r.Run()
-		fmt.Printf("Day %d:\t\t%s\t\t%d\t\t%d\n", i+1, time.Since(t).String(), a, b)
+		e := time.Since(start)
+		avg := e
+		for _ = range make([]int, 99) {
+			start := time.Now()
+			r.Run()
+			t := time.Since(start)
+			avg += t
+			if t < e {
+				e = t
+			}
+		}
+		fmt.Printf("Day %d:\t\t%s\t\t%s\t\t%d\t\t%d\n", i+1, e.String(), (avg/100).String(), a, b)
 	}
 }

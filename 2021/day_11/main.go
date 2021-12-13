@@ -8,7 +8,7 @@ import (
 	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
-var grid = [][]pos{}
+var grid [][]pos
 
 type pos struct {
 	r int
@@ -23,6 +23,7 @@ func GetRunner() runner.Runner {
 }
 
 func (r *run) Run() (a int, b int) {
+	grid = [][]pos{}
 	helper.DownloadAndRead(11, func(l string) {
 		row := []pos{}
 		for _, s := range strings.Split(l, "") {

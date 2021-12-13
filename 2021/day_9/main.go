@@ -10,8 +10,8 @@ import (
 )
 
 var rows, cols int
-var grid = [][]int{}
-var basins = []int{}
+var grid [][]int
+var basins []int
 
 type run struct{}
 
@@ -21,6 +21,9 @@ func GetRunner() runner.Runner {
 
 func (r *run) Run() (a int, b int) {
 	lows := 0
+	grid = [][]int{}
+	basins = []int{}
+
 	helper.DownloadAndRead(9, func(l string) {
 		row := []int{}
 		for _, s := range strings.Split(l, "") {
