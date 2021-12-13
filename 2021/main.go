@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/martijnjanssen/aoc/2021/day_1"
@@ -21,7 +23,7 @@ import (
 )
 
 func main() {
-
+	args := os.Args[1:]
 	days := []runner.Runner{
 		runner.NoOpRunner(),
 		day_1.GetRunner(),
@@ -39,7 +41,41 @@ func main() {
 		day_13.GetRunner(),
 	}
 
-	defer helper.Time()()
+	if len(args) == 0 {
+		d := time.Now().Day()
+		defer helper.Time()()
+		a, b := days[d].Run()
+		fmt.Printf("Solutions are: %d\t%d\n", a, b)
+		return
+	}
+
+	if day, err := strconv.Atoi(args[0]); err == nil && day < len(days) {
+		fmt.Printf("Running day %d\n", day)
+		defer helper.Time()()
+		a, b := days[day].Run()
+		fmt.Printf("Solutions are: %d\t%d\n", a, b)
+		return
+	}
+
+	if args[0] == "all" {
+		defer helper.Time()()
+		for i := range days[1:] {
+			t := time.Now()
+			a, b := days[i+1].Run()
+			fmt.Printf("Day %d:\t\t%s\t\t%d\t\t%d\n", i+1, time.Since(t).String(), a, b)
+		}
+		return
+	}
+
+	if args[0] == "bench" {
+		defer helper.Time()()
+		bench(days)
+		return
+	}
+
+}
+
+func bench(days []runner.Runner) {
 	for i, r := range days[1:] {
 		start := time.Now()
 		a, b := r.Run()
@@ -54,6 +90,6 @@ func main() {
 				e = t
 			}
 		}
-		fmt.Printf("Day %d:\t\t%s\t\t%s\t\t%d\t\t%d\n", i+1, e.String(), (avg/100).String(), a, b)
+		fmt.Printf("Day %d:\t\t%s\t\t%s\t\t%d\t\t%d\n", i+1, e.String(), (avg / 100).String(), a, b)
 	}
 }
