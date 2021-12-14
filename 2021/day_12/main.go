@@ -74,14 +74,14 @@ func (r *run) Run() (a int, b int) {
 
 func (p *path) visitCave(c *cave) (*path, bool) {
 	if !c.isSmall {
-		return &path{c, p.visited + "," + c.name, p.double}, true // Allow big caves
+		return &path{c, p.visited, p.double}, true // Allow big caves
 	}
 
 	if !strings.Contains(p.visited, c.name) {
 		return &path{c, p.visited + "," + c.name, p.double}, true // Allow small non-visited caves
 	}
 
-	if p.double == "" && strings.Contains(p.visited, c.name) {
+	if p.double == "" {
 		return &path{c, p.visited, c.name}, true // Allow double visit for one small cave
 	}
 

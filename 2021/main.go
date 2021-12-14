@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime/pprof"
 	"strconv"
 	"time"
+
+	"log"
 
 	"github.com/martijnjanssen/aoc/2021/day_1"
 	"github.com/martijnjanssen/aoc/2021/day_10"
@@ -24,6 +27,16 @@ import (
 )
 
 func main() {
+	if os.Getenv("PPROF") != "" {
+		fmt.Println("pprof enabled")
+		f, err := os.Create("test.prof")
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
 	args := os.Args[1:]
 	days := []runner.Runner{
 		runner.NoOpRunner(),
@@ -44,9 +57,9 @@ func main() {
 	}
 
 	if len(args) == 0 {
-		d := time.Now().Day()
+		day := time.Now().Day()
 		defer helper.Time()()
-		a, b := days[d].Run()
+		a, b := days[day].Run()
 		fmt.Printf("Solutions are: %d\t%d\n", a, b)
 		return
 	}

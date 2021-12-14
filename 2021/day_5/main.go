@@ -30,27 +30,27 @@ func makeRange(a, b int) []int {
 	return r
 }
 
-func (l *line) getPoints() []*point {
-	ps := []*point{}
+func (l *line) getPoints() []int {
+	ps := []int{}
 	if l.a.y == l.b.y {
 		for _, i := range makeRange(l.a.x, l.b.x) {
-			ps = append(ps, &point{i, l.a.y})
+			ps = append(ps, i, l.a.y)
 		}
 	} else if l.a.x == l.b.x {
 		for _, i := range makeRange(l.a.y, l.b.y) {
-			ps = append(ps, &point{l.a.x, i})
+			ps = append(ps, l.a.x, i)
 		}
 	}
 	return ps
 }
 
-func (l *line) getDiagonalPoints() []*point {
-	ps := []*point{}
+func (l *line) getDiagonalPoints() []int {
+	ps := []int{}
 	if l.a.y != l.b.y && l.a.x != l.b.x {
 		ys := makeRange(l.a.y, l.b.y)
 		xs := makeRange(l.a.x, l.b.x)
 		for i := range ys {
-			ps = append(ps, &point{xs[i], ys[i]})
+			ps = append(ps, xs[i], ys[i])
 		}
 	}
 	return ps
@@ -82,15 +82,17 @@ func (r *run) Run() (a int, b int) {
 
 	// Write add non-diagonal lines to grid
 	for _, l := range lines {
-		for _, p := range l.getPoints() {
-			grid[p.y][p.x] += 1
+		points := l.getPoints()
+		for i := 0; i < len(points)/2; i++ {
+			grid[points[i*2]][points[i*2+1]] += 1
 		}
 	}
 	a = calculateCriticals(grid)
 
 	for _, l := range lines {
-		for _, p := range l.getDiagonalPoints() {
-			grid[p.y][p.x] += 1
+		points := l.getDiagonalPoints()
+		for i := 0; i < len(points)/2; i++ {
+			grid[points[i*2]][points[i*2+1]] += 1
 		}
 	}
 	b = calculateCriticals(grid)
