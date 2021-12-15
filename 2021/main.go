@@ -15,6 +15,7 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_12"
 	"github.com/martijnjanssen/aoc/2021/day_13"
 	"github.com/martijnjanssen/aoc/2021/day_14"
+	"github.com/martijnjanssen/aoc/2021/day_15"
 	"github.com/martijnjanssen/aoc/2021/day_3"
 	"github.com/martijnjanssen/aoc/2021/day_4"
 	"github.com/martijnjanssen/aoc/2021/day_5"
@@ -54,6 +55,7 @@ func main() {
 		day_12.GetRunner(),
 		day_13.GetRunner(),
 		day_14.GetRunner(),
+		day_15.GetRunner(),
 	}
 
 	if len(args) == 0 {
