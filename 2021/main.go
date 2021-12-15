@@ -16,6 +16,16 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_13"
 	"github.com/martijnjanssen/aoc/2021/day_14"
 	"github.com/martijnjanssen/aoc/2021/day_15"
+	"github.com/martijnjanssen/aoc/2021/day_16"
+	// "github.com/martijnjanssen/aoc/2021/day_17"
+	// "github.com/martijnjanssen/aoc/2021/day_18"
+	// "github.com/martijnjanssen/aoc/2021/day_19"
+	// "github.com/martijnjanssen/aoc/2021/day_20"
+	// "github.com/martijnjanssen/aoc/2021/day_21"
+	// "github.com/martijnjanssen/aoc/2021/day_22"
+	// "github.com/martijnjanssen/aoc/2021/day_23"
+	// "github.com/martijnjanssen/aoc/2021/day_24"
+	// "github.com/martijnjanssen/aoc/2021/day_25"
 	"github.com/martijnjanssen/aoc/2021/day_3"
 	"github.com/martijnjanssen/aoc/2021/day_4"
 	"github.com/martijnjanssen/aoc/2021/day_5"
@@ -56,6 +66,16 @@ func main() {
 		day_13.GetRunner(),
 		day_14.GetRunner(),
 		day_15.GetRunner(),
+		day_16.GetRunner(),
+		// day_17.GetRunner(),
+		// day_18.GetRunner(),
+		// day_19.GetRunner(),
+		// day_20.GetRunner(),
+		// day_21.GetRunner(),
+		// day_22.GetRunner(),
+		// day_23.GetRunner(),
+		// day_24.GetRunner(),
+		// day_25.GetRunner(),
 	}
 
 	if len(args) == 0 {
