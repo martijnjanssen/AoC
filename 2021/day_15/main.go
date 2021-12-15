@@ -1,7 +1,7 @@
 package day_15
 
 import (
-	"sort"
+	"container/heap"
 	"strconv"
 	"strings"
 
@@ -16,14 +16,14 @@ func GetRunner() runner.Runner {
 }
 
 var (
-	cave     [][]int
-	expanded [][]int
+	cave     []int
+	expanded []int
 	mY       int
 	mX       int
 )
 
 func (r *run) Run() (a int, b int) {
-	cave = [][]int{}
+	cave = []int{}
 	helper.DownloadAndRead(15, func(l string) {
 		spl := strings.Split(l, "")
 		ns := []int{}
@@ -31,81 +31,64 @@ func (r *run) Run() (a int, b int) {
 			n, _ := strconv.Atoi(spl[i])
 			ns = append(ns, n)
 		}
-		cave = append(cave, ns)
+		cave = append(cave, ns...)
+
+		if mX == 0 {
+			mX = len(ns)
+			mY = len(ns)
+		}
 	})
-	expanded = make([][]int, len(cave)*5)
-	for i := range expanded {
-		expanded[i] = make([]int, len(cave[0])*5)
-	}
+	expanded = make([]int, mY*mX*5*5)
 
-	mY = len(cave)
-	mX = len(cave[0])
+	pq := make(PriorityQueue, 1)
+	pq[0] = &point{y: 0, x: 0, r: 0, small: true}
+	heap.Init(&pq)
 
-	// go func() {
-	// 	for true {
-	// 		for y := 0; y < mY; y++ {
-	// 			for x := 0; x < mX; x++ {
-	// 				fmt.Printf("%d\t", expanded[y][x])
-	// 			}
-	// 			fmt.Println("")
-	// 		}
-	// 		fmt.Println("")
-	// 		time.Sleep(time.Second)
-	// 	}
-	// }()
+	handleTodo(&pq, true)
+	a = expanded[(mY-1)*5*mX+mX-1]
 
-	todo := [][]int{{0, 0, 0}}
-	for len(todo) > 0 {
-		tip := todo[len(todo)-1]
-		todo = todo[:len(todo)-1]
-		y := tip[0]
-		x := tip[1]
-		r := tip[2]
-		if expanded[y][x] != 0 && r >= expanded[y][x] {
-			continue
-		}
-		expanded[y][x] = r
-
-		rs := getRisks(y, x)
-		// fmt.Println(rs)
-		for i := 0; i < len(rs); i++ {
-			nr := rs[i][2]
-			if nr == -1 {
-				continue
-			}
-			ny := rs[i][0]
-			nx := rs[i][1]
-			todo = insert(todo, []int{ny, nx, r + nr})
-		}
-	}
-
-	a = expanded[mY-1][mX-1]
-	b = expanded[mY*5-1][mX*5-1]
+	handleTodo(&pq, false)
+	b = expanded[mY*5*mX*5-1]
 
 	return
 }
 
-func insert(s [][]int, e []int) [][]int {
-	i := sort.Search(len(s), func(i int) bool {
-		return s[i][2] <= e[2]
-	})
-	s = append(s, nil)
-	copy(s[i+1:], s[i:])
-	s[i] = e
-	return s
-}
+func handleTodo(pq *PriorityQueue, small bool) {
+	for pq.Len() > 0 {
+		tip := heap.Pop(pq).(*point)
+		if small && !tip.small {
+			return
+		}
+		if expanded[tip.y*mY*5+tip.x] != 0 && tip.r >= expanded[tip.y*mY*5+tip.x] {
+			continue
+		}
+		expanded[tip.y*mY*5+tip.x] = tip.r
 
-func getRisks(y int, x int) [][]int {
-	rs := [][]int{}
-	rs = insert(rs, []int{y, x - 1, onGrid(y, x-1)})
-	rs = insert(rs, []int{y - 1, x, onGrid(y-1, x)})
-	rs = insert(rs, []int{y, x + 1, onGrid(y, x+1)})
-	return insert(rs, []int{y + 1, x, onGrid(y+1, x)})
-}
-
-func onGrid(y int, x int) int {
-	if y >= 0 && y < len(expanded) && x >= 0 && x < len(expanded[0]) {
-		return (cave[y%mY][x%mX]+y/mY+x/mX-1)%9 + 1
+		rs := getRisks(tip.y, tip.x)
+		// fmt.Println(rs)
+		for i := range rs {
+			if rs[i] == nil {
+				continue
+			}
+			rs[i].r += tip.r
+			heap.Push(pq, rs[i])
+		}
 	}
-	return -1
+}
+
+func getRisks(y int, x int) []*point {
+	return []*point{
+		createPoint(y, x+1),
+		createPoint(y+1, x),
+		createPoint(y, x-1),
+		createPoint(y-1, x),
+	}
+}
+
+func createPoint(y int, x int) *point {
+	if y >= 0 && y < mY*5 && x >= 0 && x < mX*5 {
+		r := (cave[(y%mY)*mY+x%mX]+y/mY+x/mX-1)%9 + 1
+		return &point{y: y, x: x, r: r, small: y < mY && x < mX}
+	}
+	return nil
 }
