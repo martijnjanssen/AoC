@@ -1,7 +1,6 @@
 package day_16
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 
@@ -23,16 +22,34 @@ func read(data *string, bits int) string {
 
 var (
 	versionSum int
+	hexToBin = map[byte]string{
+		'0': "0000",
+		'1': "0001",
+		'2': "0010",
+		'3': "0011",
+		'4': "0100",
+		'5': "0101",
+		'6': "0110",
+		'7': "0111",
+		'8': "1000",
+		'9': "1001",
+		'A': "1010",
+		'B': "1011",
+		'C': "1100",
+		'D': "1101",
+		'E': "1110",
+		'F': "1111",
+	}
 )
 
 func (r *run) Run() (a int, b int) {
 	var data string
 	helper.DownloadAndRead(16, func(l string) {
-		raw := l
-		for i := range raw {
-			c, _ := strconv.ParseInt(string(raw[i]), 16, 64)
-			data += fmt.Sprintf("%04b", c)
+		d := make([]byte, len(l)*4)
+		for i := range l {
+			copy(d[i*4:], hexToBin[l[i]])
 		}
+		data = string(d)
 	})
 
 	return versionSum, parse(&data)

@@ -86,6 +86,16 @@ func main() {
 		return
 	}
 
+	if args[0] == "loop" {
+		day, _ := strconv.Atoi(args[1])
+		fmt.Printf("Looping day %d\n", day)
+		defer helper.Time()()
+		for range make([]int, 100) {
+			days[day].Run()
+		}
+		return
+	}
+
 	if day, err := strconv.Atoi(args[0]); err == nil && day < len(days) {
 		fmt.Printf("Running day %d\n", day)
 		defer helper.Time()()
