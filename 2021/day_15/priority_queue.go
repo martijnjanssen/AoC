@@ -1,5 +1,6 @@
 package day_15
 
+
 type point struct {
 	y int
 	x int
@@ -26,10 +27,15 @@ func (pq PriorityQueue) Less(i, j int) bool {
 
 func (pq PriorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
+	pq[i].index = i
+	pq[j].index = j
 }
 
 func (pq *PriorityQueue) Push(x interface{}) {
-	*pq = append(*pq, x.(*point))
+	n := len(*pq)
+	item := x.(*point)
+	item.index = n
+	*pq = append(*pq, item)
 }
 
 func (pq *PriorityQueue) Pop() interface{} {
@@ -43,9 +49,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 // update modifies the priority and value of an Item in the queue.
-// func (pq *PriorityQueue) update(item *point, y int, x int, r int) {
-// 	item.y = y
-// 	item.x = x
+// func (pq *PriorityQueue) update(item *point, r int) {
 // 	item.r = r
 // 	heap.Fix(pq, item.index)
 // }
