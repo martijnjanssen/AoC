@@ -67,33 +67,26 @@ func handleTodo(pq *PriorityQueue, small bool) {
 			return
 		}
 
-		rs := updateNeighbors(tip.y, tip.x, tip.r)
-		for i := range rs {
-			if rs[i] == nil {
-				continue
-			}
-			heap.Push(pq, rs[i])
+		updatePoint(pq, tip.y, tip.x+1, tip.r)
+		updatePoint(pq, tip.y+1, tip.x, tip.r)
+		updatePoint(pq, tip.y, tip.x-1, tip.r)
+		updatePoint(pq, tip.y-1, tip.x, tip.r)
+	}
+}
+
+func updatePoint(pq *PriorityQueue, y int, x int, r int) {
+	if y < 0 || y >= mY*5 || x < 0 || x >= mX*5 {
+		return
+	}
+
+	nr := r + (cave[(y%mY)*mY+x%mX]+y/mY+x/mX-1)%9 + 1
+	p := expanded[y*mY*5+x]
+	if nr < p.r {
+		if p.inQueue {
+			pq.update(p, nr)
+		} else {
+			p.r = nr
+			heap.Push(pq, p)
 		}
 	}
-}
-
-func updateNeighbors(y int, x int, r int) []*point {
-	return []*point{
-		updatePoint(y, x+1, r),
-		updatePoint(y+1, x, r),
-		updatePoint(y, x-1, r),
-		updatePoint(y-1, x, r),
-	}
-}
-
-func updatePoint(y int, x int, r int) *point {
-	if y < 0 || y >= mY*5 || x < 0 || x >= mX*5 {
-		return nil
-	}
-	nr := r + (cave[(y%mY)*mY+x%mX]+y/mY+x/mX-1)%9 + 1
-	if nr < expanded[y*mY*5+x].r {
-		expanded[y*mY*5+x].r = nr
-		return expanded[y*mY*5+x]
-	}
-	return nil
 }
