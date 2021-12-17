@@ -62,8 +62,8 @@ func (r *run) Run() (a int, b int) {
 				b++
 				continue
 			}
-			p, ok := tip.visitCave(tip.c.next[i])
-			if ok {
+			p := tip.visitCave(tip.c.next[i])
+			if p != nil {
 				paths = append(paths, p)
 			}
 		}
@@ -72,18 +72,18 @@ func (r *run) Run() (a int, b int) {
 	return
 }
 
-func (p *path) visitCave(c *cave) (*path, bool) {
+func (p *path) visitCave(c *cave) *path {
 	if !c.isSmall {
-		return &path{c, p.visited, p.double}, true // Allow big caves
+		return &path{c, p.visited, p.double} // Allow big caves
 	}
 
 	if !strings.Contains(p.visited, c.name) {
-		return &path{c, p.visited + "," + c.name, p.double}, true // Allow small non-visited caves
+		return &path{c, p.visited + "," + c.name, p.double} // Allow small non-visited caves
 	}
 
 	if p.double == "" {
-		return &path{c, p.visited, c.name}, true // Allow double visit for one small cave
+		return &path{c, p.visited, c.name} // Allow double visit for one small cave
 	}
 
-	return nil, false
+	return nil
 }
