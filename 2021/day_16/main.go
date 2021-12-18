@@ -22,7 +22,7 @@ func read(data *string, bits int) string {
 
 var (
 	versionSum int
-	hexToBin = map[byte]string{
+	hexToBin   = map[byte]string{
 		'0': "0000",
 		'1': "0001",
 		'2': "0010",
@@ -113,7 +113,7 @@ func calc(typ int, rs []int) int {
 		}
 		return r
 	case 2:
-		r := math.MaxInt
+		r := math.MaxInt32
 		for i := range rs {
 			r = helper.Min(r, rs[i])
 		}

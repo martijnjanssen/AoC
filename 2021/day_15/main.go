@@ -42,7 +42,7 @@ func (r *run) Run() (a int, b int) {
 	expanded = make([]*point, mY*mX*5*5)
 	for y := 0; y < mY*5; y++ {
 		for x := 0; x < mX*5; x++ {
-			expanded[y*mY*5+x] = &point{y: y, x: x, r: math.MaxInt, small: y < mY && x < mX}
+			expanded[y*mY*5+x] = &point{y: y, x: x, r: math.MaxInt32, small: y < mY && x < mX}
 		}
 	}
 	expanded[0].r = 0
