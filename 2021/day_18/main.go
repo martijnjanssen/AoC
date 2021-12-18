@@ -19,24 +19,29 @@ type ls struct {
 	right *ls
 
 	num int
-	dth int
+}
+
+type rank struct {
+	mag int
+	num string
 }
 
 func (r *run) Run() (a int, b int) {
-	acc := ""
+	var ast *ls
 	numbers := []string{}
 	helper.DownloadAndRead(18, func(l string) {
 		numbers = append(numbers, l)
-		if acc == "" {
-			acc = l
+		if ast == nil {
+			ast = createAST(l, 0, nil)
 			return
 		}
 
-		combAST := createAST("["+acc+","+l+"]", 0, nil)
+		combAST := &ls{left: ast, num: -1}
+		combAST.right = createAST(l, 0, combAST)
 		for traverse(combAST) {
 		}
-		acc = getString(combAST)
-		a = magnitude(combAST)
+		ast = combAST
+		a = magnitude(ast)
 	})
 
 	for i := 0; i < len(numbers); i++ {
@@ -48,7 +53,6 @@ func (r *run) Run() (a int, b int) {
 			combAST := createAST("["+numbers[i]+","+numbers[j]+"]", 0, nil)
 			for traverse(combAST) {
 			}
-			acc = getString(combAST)
 			b = helper.Max(b, magnitude(combAST))
 		}
 	}
@@ -88,27 +92,27 @@ L:
 		default:
 			if c == 0 {
 				nr, _ := strconv.Atoi(n)
-				return &ls{num: nr, dth: d, p: p}
+				return &ls{num: nr, p: p}
 			}
 		}
 	}
-	node := &ls{dth: d, num: -1, p: p}
+	node := &ls{num: -1, p: p}
 	node.left = createAST(n[1:c], d+1, node)
 	node.right = createAST(n[c+1:len(n)-1], d+1, node)
 	return node
 }
 
 func traverse(t *ls) bool {
-	if explode(t) {
+	if explode(t, 0) {
 		return true
 	}
 
-	return split(t)
+	return split(t, 0)
 }
 
-func explode(t *ls) bool {
+func explode(t *ls, d int) bool {
 	if t.left != nil { // Still in nodes
-		if t.left.num != -1 && t.right.num != -1 && t.dth >= 4 {
+		if t.left.num != -1 && t.right.num != -1 && d >= 4 {
 			addSide(t, "left", t.left.num)
 			addSide(t, "right", t.right.num)
 			t.left = nil
@@ -116,29 +120,29 @@ func explode(t *ls) bool {
 			t.num = 0
 			return true
 		}
-		return explode(t.left) || explode(t.right)
+		return explode(t.left, d+1) || explode(t.right, d+1)
 	}
 
 	return false
 }
 
-func split(t *ls) bool {
+func split(t *ls, d int) bool {
 	if t == nil {
 		return false
 	}
-	if split(t.left) {
+	if split(t.left, d+1) {
 		return true
 	}
-	if split(t.right) {
+	if split(t.right, d+1) {
 		return true
 	}
 
 	if t.num > 9 {
-		t.left = &ls{num: t.num / 2, dth: t.dth + 1, p: t}
+		t.left = &ls{num: t.num / 2, p: t}
 		if t.num%2 == 0 {
-			t.right = &ls{num: t.num / 2, dth: t.dth + 1, p: t}
+			t.right = &ls{num: t.num / 2, p: t}
 		} else {
-			t.right = &ls{num: (t.num-1)/2 + 1, dth: t.dth + 1, p: t}
+			t.right = &ls{num: (t.num-1)/2 + 1, p: t}
 		}
 		t.num = -1
 		return true
