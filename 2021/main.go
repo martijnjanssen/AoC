@@ -27,6 +27,7 @@ import (
 	// "github.com/martijnjanssen/aoc/2021/day_23"
 	// "github.com/martijnjanssen/aoc/2021/day_24"
 	// "github.com/martijnjanssen/aoc/2021/day_25"
+	"github.com/martijnjanssen/aoc/2021/day_2"
 	"github.com/martijnjanssen/aoc/2021/day_3"
 	"github.com/martijnjanssen/aoc/2021/day_4"
 	"github.com/martijnjanssen/aoc/2021/day_5"
@@ -53,7 +54,7 @@ func main() {
 	days := []runner.Runner{
 		runner.NoOpRunner(),
 		day_1.GetRunner(),
-		runner.NoOpRunner(),
+		day_2.GetRunner(),
 		day_3.GetRunner(),
 		day_4.GetRunner(),
 		day_5.GetRunner(),

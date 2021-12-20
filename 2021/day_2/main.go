@@ -1,56 +1,39 @@
-package main
+package day_2
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/martijnjanssen/aoc/pkg/helper"
+	"github.com/martijnjanssen/aoc/pkg/runner"
 )
 
-type direction string
+type run struct{}
 
-var (
-	FORWARD direction = "forward"
-	DOWN    direction = "down"
-	UP      direction = "up"
-)
-
-var (
-	horizontal = 0
-	aim        = 0
-	depth      = 0
-)
-
-type action struct {
-	command direction
-	amount  int
+func GetRunner() runner.Runner {
+	return &run{}
 }
 
-func main() {
-	defer helper.Time()()
+func (r *run) Run() (int, int) {
+	hrzA, dthA := 0, 0
+	hrzB, aim, dthB := 0, 0, 0
 
-	as := []action{}
 	helper.DownloadAndRead(2, func(l string) {
 		s := strings.Split(l, " ")
 		a, _ := strconv.Atoi(s[1])
-		as = append(as, action{direction(s[0]), a})
+		switch s[0] {
+		case "forward":
+			hrzA += a
+			hrzB += a
+			dthB += aim * a
+		case "up":
+			dthA -= a
+			aim -= a
+		case "down":
+			dthA += a
+			aim += a
+		}
 	})
 
-	for _, a := range as {
-		switch a.command {
-		case FORWARD:
-			horizontal += a.amount
-			depth += aim * a.amount
-			break
-		case UP:
-			aim -= a.amount
-			break
-		case DOWN:
-			aim += a.amount
-			break
-		}
-	}
-
-	fmt.Printf("Multiplication is: %d\n", horizontal*depth)
+	return hrzA * dthA, hrzB * dthB
 }
