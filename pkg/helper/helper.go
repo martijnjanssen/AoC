@@ -12,7 +12,7 @@ func DownloadAndRead(day int, fn func(string)) {
 		logrus.Fatalf("unable to load session cookie: %s", err)
 	}
 	filename := fmt.Sprintf("day_%d/input.txt", day)
-	err = downloadInput(sCk, 2021, day, false, filename)
+	err = downloadInput(sCk, 2024, day, false, filename)
 	if err != nil {
 		logrus.Fatalf("unable to download input: %s", err)
 	}
