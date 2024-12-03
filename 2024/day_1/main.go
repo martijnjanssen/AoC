@@ -1,12 +1,13 @@
 package day_1
 
 import (
+	"bufio"
 	"slices"
 	"strconv"
 	"strings"
 
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
 type run struct{}
@@ -15,12 +16,12 @@ func GetRunner() runner.Runner {
 	return &run{}
 }
 
-func (r *run) Run() (a int, b int) {
+func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	ls := []int{}
 	rs := []int{}
 
 	rMap := map[int]int{}
-	helper.DownloadAndRead(1, func(l string) {
+	helper.ReadLines(buf, func(l string) {
 		a, b, ok := strings.Cut(l, "   ")
 		if !ok {
 			panic("wrong format")

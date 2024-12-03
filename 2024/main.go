@@ -34,8 +34,8 @@ import (
 	// "github.com/martijnjanssen/aoc/2024/day_7"
 	// "github.com/martijnjanssen/aoc/2024/day_8"
 	// "github.com/martijnjanssen/aoc/2024/day_9"
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
 func main() {
@@ -46,7 +46,10 @@ func main() {
 			log.Fatal(err)
 		}
 		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
+		defer func() {
+			pprof.StopCPUProfile()
+			f.Close()
+		}()
 	}
 
 	args := os.Args[1:]
@@ -81,26 +84,29 @@ func main() {
 
 	if len(args) == 0 {
 		day := time.Now().Day()
+		buf := helper.DownloadAndRead(day)
 		defer helper.Time()()
-		a, b := days[day].Run()
+		a, b := days[day].Run(buf)
 		fmt.Printf("Solutions are: %d\t%d\n", a, b)
 		return
 	}
 
 	if args[0] == "loop" {
 		day, _ := strconv.Atoi(args[1])
+		buf := helper.DownloadAndRead(day)
 		fmt.Printf("Looping day %d\n", day)
 		defer helper.Time()()
 		for range make([]int, 100) {
-			days[day].Run()
+			days[day].Run(buf)
 		}
 		return
 	}
 
 	if day, err := strconv.Atoi(args[0]); err == nil && day < len(days) {
 		fmt.Printf("Running day %d\n", day)
+		buf := helper.DownloadAndRead(day)
 		defer helper.Time()()
-		a, b := days[day].Run()
+		a, b := days[day].Run(buf)
 		fmt.Printf("Solutions are: %d\t%d\n", a, b)
 		return
 	}
@@ -108,9 +114,11 @@ func main() {
 	if args[0] == "all" {
 		defer helper.Time()()
 		for i := range days[1:] {
+			day := i + 1
+			buf := helper.DownloadAndRead(day)
 			t := time.Now()
-			a, b := days[i+1].Run()
-			fmt.Printf("Day %d:\t\t%s\t\t%d\t\t%d\n", i+1, time.Since(t).String(), a, b)
+			a, b := days[day].Run(buf)
+			fmt.Printf("Day %d:\t\t%s\t\t%d\t\t%d\n", day, time.Since(t).String(), a, b)
 		}
 		return
 	}
@@ -125,19 +133,21 @@ func main() {
 
 func bench(days []runner.Runner) {
 	for i, r := range days[1:] {
+		day := i + 1
+		buf := helper.DownloadAndRead(day)
 		start := time.Now()
-		a, b := r.Run()
+		a, b := r.Run(buf)
 		e := time.Since(start)
 		avg := e
 		for _ = range make([]int, 99) {
 			start := time.Now()
-			r.Run()
+			r.Run(buf)
 			t := time.Since(start)
 			avg += t
 			if t < e {
 				e = t
 			}
 		}
-		fmt.Printf("Day %d:\t\t%s\t\t%s\t\t%d\t\t%d\n", i+1, e.String(), (avg / 100).String(), a, b)
+		fmt.Printf("Day %d:\t\t%s\t\t%s\t\t%d\t\t%d\n", day, e.String(), (avg / 100).String(), a, b)
 	}
 }

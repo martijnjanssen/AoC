@@ -1,11 +1,12 @@
 package day_3
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
 
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
 type run struct{}
@@ -18,11 +19,12 @@ const doCmd = "do()"
 const dontCmd = "don't()"
 const mulStartCmd = "mul("
 
-func (r *run) Run() (a int, b int) {
+func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	accA := 0
 	accB := 0
 	do := true
-	helper.DownloadAndRead(3, func(l string) {
+
+	helper.ReadLines(buf, func(l string) {
 		for len(l) > 0 {
 			switch {
 			case len(dontCmd) <= len(l) && l[:len(dontCmd)] == dontCmd:
@@ -58,7 +60,6 @@ func (r *run) Run() (a int, b int) {
 			default:
 				l = l[1:]
 			}
-
 		}
 	})
 

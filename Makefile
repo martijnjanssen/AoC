@@ -6,6 +6,11 @@ total:
 	@cd 2024; \
 	go run main.go all
 
+pprof:
+	@cd 2024; \
+	PPROF=yes go run main.go loop $(subst 2024/,,${DAY}); \
+	go tool pprof --text test.prof
+
 bench:
 	@cd 2024; \
 	go run main.go bench

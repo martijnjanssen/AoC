@@ -1,11 +1,12 @@
 package day_2
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
 
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
 type run struct{}
@@ -14,10 +15,10 @@ func GetRunner() runner.Runner {
 	return &run{}
 }
 
-func (r *run) Run() (a int, b int) {
+func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	validA := 0
 	validB := 0
-	helper.DownloadAndRead(2, func(l string) {
+	helper.ReadLines(buf, func(l string) {
 		ls := strings.Split(l, " ")
 
 		if checkSequence(ls) {
