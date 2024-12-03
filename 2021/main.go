@@ -35,8 +35,8 @@ import (
 	"github.com/martijnjanssen/aoc/2021/day_7"
 	"github.com/martijnjanssen/aoc/2021/day_8"
 	"github.com/martijnjanssen/aoc/2021/day_9"
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2021/pkg/helper"
+	"github.com/martijnjanssen/aoc/2021/pkg/runner"
 )
 
 func main() {

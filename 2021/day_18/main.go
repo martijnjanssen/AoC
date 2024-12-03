@@ -3,8 +3,8 @@ package day_18
 import (
 	"strconv"
 
-	"github.com/martijnjanssen/aoc/pkg/helper"
-	"github.com/martijnjanssen/aoc/pkg/runner"
+	"github.com/martijnjanssen/aoc/2021/pkg/helper"
+	"github.com/martijnjanssen/aoc/2021/pkg/runner"
 )
 
 type run struct{}
