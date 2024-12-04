@@ -92,11 +92,12 @@ func main() {
 	}
 
 	if args[0] == "loop" {
+		times := 1000000
 		day, _ := strconv.Atoi(args[1])
 		buf := helper.DownloadAndRead(day)
-		fmt.Printf("Looping day %d\n", day)
+		fmt.Printf("Looping day %d %d times\n", day, times)
 		defer helper.Time()()
-		for range make([]int, 100) {
+		for range make([]int, times) {
 			days[day].Run(buf)
 		}
 		return
