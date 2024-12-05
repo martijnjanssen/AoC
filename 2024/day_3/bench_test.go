@@ -10,6 +10,5 @@ func Benchmark(b *testing.B) {
 	c := &run{}
 	for i := 0; i < b.N; i++ {
 		c.Run(helper.DownloadAndRead(3))
-
 	}
 }
