@@ -29,6 +29,7 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	for i := 0; i < len(grid); i++ {
 		for j := 0; j < len(grid[i]); j++ {
 
+			// Solve B
 			if i+2 < len(grid) && j+2 < len(grid[i]) {
 				dl := string([]byte{grid[i][j], grid[i+1][j+1], grid[i+2][j+2]})
 				dr := string([]byte{grid[i][j+2], grid[i+1][j+1], grid[i+2][j]})
@@ -37,6 +38,7 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 				}
 			}
 
+			// Solve A
 			if i+3 < len(grid) {
 				hor := string([]byte{grid[i][j], grid[i+1][j], grid[i+2][j], grid[i+3][j]})
 				if hor == xmas || hor == samx {

@@ -19,13 +19,16 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 
 	readConstraints := true
 	helper.ReadLines(buf, func(l string) {
-		if l == "" {
+		switch {
+		case l == "":
 			readConstraints = false
 			return
-		}
-		if readConstraints {
+
+		case readConstraints:
 			cs = append(cs, input.SplitToInt(l, "|"))
-		} else {
+			return
+
+		default:
 			ls := input.SplitToInt(l, ",")
 			if isValid(cs, ls) {
 				a += getMiddleValue(ls)
