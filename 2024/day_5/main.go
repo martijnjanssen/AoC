@@ -2,10 +2,9 @@ package day_5
 
 import (
 	"bufio"
-	"strconv"
-	"strings"
 
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/input"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
@@ -16,7 +15,7 @@ func GetRunner() runner.Runner {
 }
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
-	cs := [][]string{}
+	cs := [][]int{}
 
 	readConstraints := true
 	helper.ReadLines(buf, func(l string) {
@@ -25,16 +24,16 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 			return
 		}
 		if readConstraints {
-			ac, bc, _ := strings.Cut(l, "|")
-			cs = append(cs, []string{ac, bc})
+			cs = append(cs, input.SplitToInt(l, "|"))
 		} else {
-			if isValid(cs, l) {
-				a += getMiddleValue(l)
+			ls := input.SplitToInt(l, ",")
+			if isValid(cs, ls) {
+				a += getMiddleValue(ls)
 			} else {
-				for !isValid(cs, l) {
-					l = fix(cs, l)
+				for !isValid(cs, ls) {
+					ls = fix(cs, ls)
 				}
-				b += getMiddleValue(l)
+				b += getMiddleValue(ls)
 			}
 		}
 	})
@@ -42,39 +41,50 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	return
 }
 
-func isValid(cs [][]string, l string) bool {
-	for _, c := range cs {
-		aIndex := strings.Index(l, c[0])
-		bIndex := strings.Index(l, c[1])
-		if aIndex == -1 || bIndex == -1 {
+func isValid(cs [][]int, ls []int) bool {
+	for i := range cs {
+		a, b := findIndices(ls, cs[i][0], cs[i][1])
+		if a == -1 || b == -1 {
 			continue
 		}
-		if aIndex > bIndex {
+		if a > b {
 			return false
 		}
 	}
 	return true
 }
 
-func fix(cs [][]string, l string) string {
-	for _, c := range cs {
-		aIndex := strings.Index(l, c[0])
-		bIndex := strings.Index(l, c[1])
-		if aIndex == -1 || bIndex == -1 {
+func fix(cs [][]int, ls []int) []int {
+	for i := range cs {
+		a, b := findIndices(ls, cs[i][0], cs[i][1])
+		if a == -1 || b == -1 {
 			continue
 		}
-		if aIndex > bIndex {
-			l = strings.Replace(l, c[0], "", 1)
-			l = strings.Replace(l, c[1], c[0]+","+c[1], 1)
-			l = strings.Replace(l, ",,", ",", 1)
-			l = strings.Trim(l, ",")
+		if a > b {
+			ls = append(ls[:a], ls[a+1:]...) // Remove
+			ls = append(ls[:b+1], ls[b:]...) // Make room
+			ls[b] = cs[i][0]                 // Insert
 		}
 	}
-	return l
+	return ls
 }
 
-func getMiddleValue(l string) int {
-	spl := strings.Split(l, ",")
-	res, _ := strconv.Atoi(spl[len(spl)/2])
-	return res
+func findIndices(ls []int, a int, b int) (int, int) {
+	aInd := -1
+	bInd := -1
+	i := 0
+	for i < len(ls) && (aInd == -1 || bInd == -1) {
+		if a == ls[i] {
+			aInd = i
+		}
+		if b == ls[i] {
+			bInd = i
+		}
+		i++
+	}
+	return aInd, bInd
+}
+
+func getMiddleValue(ls []int) int {
+	return ls[len(ls)/2]
 }
