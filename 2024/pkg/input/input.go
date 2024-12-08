@@ -18,3 +18,11 @@ func SplitToInt(s string, sep string) []int {
 
 	return ints
 }
+
+func SplitToRune(s string) []rune {
+	res := []rune{}
+	for i := 0; i < len(s); i++ {
+		res = append(res, rune(s[i]))
+	}
+	return res
+}

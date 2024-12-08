@@ -33,6 +33,7 @@ import (
 	"github.com/martijnjanssen/aoc/2024/day_6"
 	"github.com/martijnjanssen/aoc/2024/day_7"
 	"github.com/martijnjanssen/aoc/2024/day_8"
+
 	// "github.com/martijnjanssen/aoc/2024/day_9"
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
@@ -136,14 +137,13 @@ func bench(days []runner.Runner) {
 	for i, r := range days[1:] {
 		day := i + 1
 		buf := helper.DownloadAndRead(day)
-		start := time.Now()
-		a, b := r.Run(buf)
-		e := time.Since(start)
-		avg := e
-		for _ = range make([]int, 99) {
+		e := time.Hour * 99
+		var a, b int
+		var t, avg time.Duration
+		for range make([]int, 100) {
 			start := time.Now()
-			r.Run(buf)
-			t := time.Since(start)
+			a, b = r.Run(buf)
+			t = time.Since(start)
 			avg += t
 			if t < e {
 				e = t
