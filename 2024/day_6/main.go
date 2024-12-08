@@ -20,8 +20,8 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	grid := [][]rune{}
 	steps := [][]rune{}
 	helper.ReadLines(buf, func(l string) {
-		rs := []rune{}
-		ss := []rune{}
+		rs := make([]rune, len(l))
+		ss := make([]rune, len(l))
 		for x := 0; x < len(l); x++ {
 			if l[x] == '^' {
 				xPos = x
