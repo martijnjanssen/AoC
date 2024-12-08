@@ -2,6 +2,7 @@ package day_7
 
 import (
 	"bufio"
+	"math"
 	"strconv"
 	"strings"
 
@@ -41,7 +42,7 @@ func choose(curr int, ns []int, goal int, allowConcat bool) bool {
 	mul := choose(curr*ns[0], ns[1:], goal, allowConcat)
 	add := choose(curr+ns[0], ns[1:], goal, allowConcat)
 	if allowConcat && !mul && !add {
-		cc, _ := strconv.Atoi(strconv.Itoa(curr) + strconv.Itoa(ns[0]))
+		cc := curr*(int(math.Pow(10, math.Floor(math.Log10(float64(ns[0])))+1))) + ns[0]
 		concat := choose(cc, ns[1:], goal, allowConcat)
 		return concat
 	}
