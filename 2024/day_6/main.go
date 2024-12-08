@@ -46,7 +46,7 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 
 	for y := 0; y < len(grid); y++ {
 		for x := 0; x < len(grid[y]); x++ {
-			if grid[y][x] == '.' && !(y == yPos-1 && x == xPos) {
+			if grid[y][x] == '.' && steps[y][x] == 'X' && !(y == yPos-1 && x == xPos) {
 				grid[y][x] = 'O'
 				hasLoop := walk(grid, steps, yPos, xPos, direction)
 				if hasLoop {
@@ -61,7 +61,7 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 }
 
 func walk(grid [][]rune, steps [][]rune, yPos int, xPos int, direction rune) bool {
-	moves := map[string]bool{}
+	moves := map[int]bool{}
 	for yPos >= 0 && yPos < len(grid) && xPos >= 0 && xPos < len(grid[yPos]) {
 		ny, nx := yPos, xPos
 		nd := direction
@@ -85,7 +85,7 @@ func walk(grid [][]rune, steps [][]rune, yPos int, xPos int, direction rune) boo
 				direction = nd
 				continue
 			}
-			move := fmt.Sprintf("%d,%d|%d,%d", yPos, xPos, ny, nx)
+			move := yPos*10000 + xPos*10 + int(direction)
 			if !moves[move] {
 				moves[move] = true
 			} else {
