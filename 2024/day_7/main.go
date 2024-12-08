@@ -35,6 +35,9 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 }
 
 func choose(curr int, ns []int, goal int, allowConcat bool) bool {
+	if curr > goal {
+		return false
+	}
 	if len(ns) == 0 {
 		return curr == goal
 	}
