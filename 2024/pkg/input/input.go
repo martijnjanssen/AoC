@@ -20,7 +20,7 @@ func SplitToInt(s string, sep string) []int {
 }
 
 func SplitToRune(s string) []rune {
-	res := []rune{}
+	res := make([]rune, len(s))
 	for i := 0; i < len(s); i++ {
 		res = append(res, rune(s[i]))
 	}
