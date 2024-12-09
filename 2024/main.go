@@ -40,18 +40,7 @@ import (
 )
 
 func main() {
-	if os.Getenv("PPROF") != "" {
-		fmt.Println("pprof enabled")
-		f, err := os.Create("test.prof")
-		if err != nil {
-			log.Fatal(err)
-		}
-		pprof.StartCPUProfile(f)
-		defer func() {
-			pprof.StopCPUProfile()
-			f.Close()
-		}()
-	}
+	defer checkPPROF()()
 
 	args := os.Args[1:]
 	days := []runner.Runner{
@@ -86,8 +75,9 @@ func main() {
 	if len(args) == 0 {
 		day := time.Now().Day()
 		buf := helper.DownloadAndRead(day)
-		defer helper.Time()()
+		r := helper.Time()
 		a, b := days[day].Run(buf)
+		r()
 		fmt.Printf("Solutions are: %d\t%d\n", a, b)
 		return
 	}
@@ -133,14 +123,31 @@ func main() {
 
 }
 
+func checkPPROF() func() {
+	if os.Getenv("PPROF") != "" {
+		fmt.Println("pprof enabled")
+		f, err := os.Create("test.prof")
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		return func() {
+			pprof.StopCPUProfile()
+			f.Close()
+		}
+	}
+
+	return func() {}
+}
+
 func bench(days []runner.Runner) {
 	for i, r := range days[1:] {
 		day := i + 1
-		buf := helper.DownloadAndRead(day)
 		e := time.Hour * 99
 		var a, b int
 		var t, avg time.Duration
 		for i := 0; i < 100; i++ {
+			buf := helper.DownloadAndRead(day)
 			start := time.Now()
 			a, b = r.Run(buf)
 			t = time.Since(start)
