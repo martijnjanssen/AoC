@@ -19,6 +19,15 @@ func SplitToInt(s string, sep string) []int {
 	return ints
 }
 
+func SplitToSingleDigitInt(s string) []int {
+	ints := make([]int, len(s))
+	for i := range ints {
+		ints[i] = int(rune(s[i]) - '0')
+	}
+
+	return ints
+}
+
 func SplitToRune(s string) []rune {
 	res := make([]rune, len(s))
 	for i := 0; i < len(s); i++ {

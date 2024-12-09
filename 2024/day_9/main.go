@@ -2,9 +2,9 @@ package day_9
 
 import (
 	"bufio"
-	_ "embed"
 
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
+	"github.com/martijnjanssen/aoc/2024/pkg/input"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
 )
 
@@ -16,18 +16,15 @@ func GetRunner() runner.Runner {
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	helper.ReadLines(buf, func(l string) {
-		a = calculateA(l)
-		b = calculateB(l)
+		fs := input.SplitToInt(l, "")
+		a = calculateA(fs)
+		b = calculateB(fs)
 	})
 
 	return
 }
 
-func toInt(r byte) int {
-	return int(r - '0')
-}
-
-func calculateA(fs string) int {
+func calculateA(fs []int) int {
 	res := 0
 
 	isProcessed := make([]bool, len(fs))
@@ -41,13 +38,13 @@ func calculateA(fs string) int {
 		}
 
 		if i%2 == 1 {
-			for j := 0; j < toInt(fs[i]); j++ {
+			for j := 0; j < fs[i]; j++ {
 				if len(rest) == 0 {
 					if isProcessed[lastFileIndex] {
 						return res
 					}
 					lastFileNum := lastFileIndex / 2
-					for k := 0; k < toInt(fs[lastFileIndex]); k++ {
+					for k := 0; k < fs[lastFileIndex]; k++ {
 						rest = append(rest, lastFileNum)
 					}
 					isProcessed[lastFileIndex] = true
@@ -59,7 +56,7 @@ func calculateA(fs string) int {
 			}
 		} else {
 			fileNum := i / 2
-			for j := 0; j < toInt(fs[i]); j++ {
+			for j := 0; j < fs[i]; j++ {
 				res += fileNum * position
 				position++
 			}
@@ -70,37 +67,37 @@ func calculateA(fs string) int {
 	return res
 }
 
-func calculateB(fs string) int {
+func calculateB(fs []int) int {
 	res := 0
 	isProcessed := make([]bool, len(fs))
 	position := 0
 	for i := 0; i < len(fs); i++ {
 		if i%2 == 1 {
-			gap := toInt(fs[i])
+			gap := fs[i]
 			for lb := len(fs) - 1; gap > 0 && lb >= 0; lb -= 2 {
-				if isProcessed[lb] || toInt(fs[lb]) > gap {
+				if isProcessed[lb] || fs[lb] > gap {
 					continue
 				}
 				fileNum := lb / 2
-				for j := 0; j < toInt(fs[lb]); j++ {
+				for j := 0; j < fs[lb]; j++ {
 					res += fileNum * position
 					position++
 				}
 				isProcessed[lb] = true
-				gap -= toInt(fs[lb])
+				gap -= fs[lb]
 			}
 			for j := 0; j < gap; j++ {
 				position++
 			}
 		} else {
 			if isProcessed[i] {
-				for j := 0; j < toInt(fs[i]); j++ {
+				for j := 0; j < fs[i]; j++ {
 					position++
 				}
 				continue
 			}
 			fileNum := i / 2
-			for j := 0; j < toInt(fs[i]); j++ {
+			for j := 0; j < fs[i]; j++ {
 				res += fileNum * position
 				position++
 			}
