@@ -15,7 +15,7 @@ func GetRunner() runner.Runner {
 }
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
-	xPos, yPos := -1, -1
+	yPos, xPos := -1, -1
 	direction := '.'
 	grid := [][]rune{}
 	steps := [][]rune{}
@@ -27,12 +27,13 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 				xPos = x
 				yPos = len(grid)
 				direction = '^'
-				rs = append(rs, '.')
-				ss = append(ss, '.')
+				rs[x] = '.'
+				ss[x] = '.'
 				continue
 			}
-			rs = append(rs, rune(l[x]))
-			ss = append(ss, rune(l[x]))
+
+			rs[x] = rune(l[x])
+			ss[x] = rune(l[x])
 		}
 		grid = append(grid, rs)
 		steps = append(steps, ss)
@@ -80,6 +81,8 @@ func walk(grid [][]rune, steps [][]rune, yPos int, xPos int, direction rune) boo
 			nd = '<'
 		}
 
+		// printGrid(grid, steps, yPos, xPos, direction)
+
 		if ny >= 0 && ny < len(grid) && nx >= 0 && nx < len(grid[ny]) {
 			if grid[ny][nx] == '#' || grid[ny][nx] == 'O' {
 				direction = nd
@@ -114,13 +117,15 @@ func count(grid [][]rune) int {
 	return res
 }
 
-func printGrid(grid [][]rune, xPos int, yPos int, direction rune) {
+func printGrid(grid [][]rune, steps [][]rune, yPos int, xPos int, direction rune) {
 	for y := 0; y < len(grid); y++ {
 		for x := 0; x < len(grid[y]); x++ {
 			if y == yPos && x == xPos {
-				fmt.Printf("%s", string(direction))
+				fmt.Printf("%c", direction)
+			} else if steps[y][x] == 'X' {
+				fmt.Printf("%c", steps[y][x])
 			} else {
-				fmt.Printf("%s", string(grid[y][x]))
+				fmt.Printf("%c", grid[y][x])
 			}
 		}
 		fmt.Printf("\n")
