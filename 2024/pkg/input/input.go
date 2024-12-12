@@ -31,7 +31,7 @@ func SplitToSingleDigitInt(s string) []int {
 func SplitToRune(s string) []rune {
 	res := make([]rune, len(s))
 	for i := 0; i < len(s); i++ {
-		res = append(res, rune(s[i]))
+		res[i] = rune(s[i])
 	}
 	return res
 }
