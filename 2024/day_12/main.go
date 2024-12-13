@@ -3,7 +3,6 @@ package day_12
 import (
 	"bufio"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
 	"github.com/martijnjanssen/aoc/2024/pkg/input"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
