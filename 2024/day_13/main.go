@@ -3,8 +3,7 @@ package day_13
 import (
 	"bufio"
 	"fmt"
-	"strconv"
-	"strings"
+	"math"
 
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
@@ -18,7 +17,7 @@ func GetRunner() runner.Runner {
 
 var aX, aY = -1, -1
 var bX, bY = -1, -1
-var scoreCache = map[string]int{}
+var scoreCache = map[int]int{}
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	helper.ReadLines(buf, func(l string) {
@@ -34,33 +33,31 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 			return
 		}
 
-		_, afterX, _ := strings.Cut(l, "X=")
-		xString, afterY, _ := strings.Cut(afterX, ",")
-		goalX, _ := strconv.Atoi(xString)
-		_, yString, _ := strings.Cut(afterY, "Y=")
-		goalY, _ := strconv.Atoi(yString)
+		var goalX, goalY int
+		fmt.Sscanf(l, "Prize: X=%d, Y=%d", &goalX, &goalY)
 
 		choice(goalX, goalY, 0, 0, 0, 0, true)
 		a += scoreCache[cacheKey(goalX, goalY)]
 
 		if scoreCache[cacheKey(goalX, goalY)] == 0 {
-			scoreCache = make(map[string]int, len(scoreCache))
 			goalX += 10000000000000
 			goalY += 10000000000000
-			choice(goalX, goalY, 0, 0, 0, 0, false)
-			b += scoreCache[cacheKey(goalX, goalY)]
-			fmt.Printf("%s\n(%d, %d):   a(%d, %d)   b(%d, %d)\n\n", l, goalX, goalY, aX, aY, bX, bY)
+
+			aPress := math.Round(((float64(goalX) * float64(bY) / float64(bX)) - float64(goalY)) / ((float64(bY) * float64(aX) / float64(bX)) - float64(aY)))
+			bPress := math.Round(float64(goalX)-float64(aPress)*float64(aX)) / float64(bX)
+
+			b += int(aPress)*3 + int(bPress)
 		}
 
 		aX, aY, bX, bY = -1, -1, -1, -1
-		scoreCache = make(map[string]int, len(scoreCache))
+		scoreCache = make(map[int]int, len(scoreCache))
 	})
 
 	return
 }
 
-func cacheKey(x int, y int) string {
-	return fmt.Sprintf("%d,%d", x, y)
+func cacheKey(x int, y int) int {
+	return x*1000000 + y
 }
 
 func choice(goalX int, goalY int, x int, y int, a int, b int, limitPress bool) {
@@ -88,11 +85,7 @@ func choice(goalX int, goalY int, x int, y int, a int, b int, limitPress bool) {
 }
 
 func splitLine(l string) (int, int) {
-	_, afterX, _ := strings.Cut(l, "X+")
-	xString, afterY, _ := strings.Cut(afterX, ",")
-	x, _ := strconv.Atoi(xString)
-	_, yString, _ := strings.Cut(afterY, "Y+")
-	y, _ := strconv.Atoi(yString)
-
+	var x, y int
+	fmt.Sscanf(l[10:], "X+%d, Y+%d", &x, &y)
 	return x, y
 }
