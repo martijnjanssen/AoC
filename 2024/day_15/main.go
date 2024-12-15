@@ -3,6 +3,7 @@ package day_15
 import (
 	"bufio"
 	"fmt"
+	"strings"
 
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
 	"github.com/martijnjanssen/aoc/2024/pkg/input"
@@ -16,10 +17,21 @@ func GetRunner() runner.Runner {
 }
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
+	// Enable to walk through the grid
+	// if err := keyboard.Open(); err != nil {
+	// 	panic(err)
+	// }
+	// defer func() {
+	// 	_ = keyboard.Close()
+	// }()
+
 	gridScanning := true
 	grid := [][]rune{}
+	expandedGrid := [][]rune{}
 	moves := ""
 	yPos, xPos := -1, -1
+	expandedYPos, expandedXPos := -1, -1
+
 	helper.ReadLines(buf, func(l string) {
 		if l == "" {
 			gridScanning = false
@@ -34,37 +46,69 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 					grid[len(grid)-1][x] = '.'
 				}
 			}
+
+			l = strings.ReplaceAll(l, "#", "##")
+			l = strings.ReplaceAll(l, "O", "[]")
+			l = strings.ReplaceAll(l, ".", "..")
+			l = strings.ReplaceAll(l, "@", "@.")
+			expandedGrid = append(expandedGrid, input.SplitToRune(l))
 			return
 		}
 
 		moves += l
 	})
+	expandedYPos, expandedXPos = yPos, xPos*2
+	expandedGrid[expandedYPos][expandedXPos] = '.'
 
+	a = solve(grid, moves, yPos, xPos)
+	b = solve(expandedGrid, moves, expandedYPos, expandedXPos)
+
+	return
+}
+
+func solve(grid [][]rune, moves string, yPos int, xPos int) int {
+	score := 0
 	for i := range moves {
-		fmt.Printf("Move %s:\n", string(moves[i]))
-		dy, dx := getDyDx(rune(moves[i]))
+		move := moves[i]
+
+		// Enable this code block to walk through the grid
+		// _, key, _ := keyboard.GetKey()
+		// switch key {
+		// case keyboard.KeyEsc:
+		// 	return 0
+		// case keyboard.KeyArrowUp:
+		// 	move = '^'
+		// case keyboard.KeyArrowDown:
+		// 	move = 'v'
+		// case keyboard.KeyArrowLeft:
+		// 	move = '<'
+		// case keyboard.KeyArrowRight:
+		// 	move = '>'
+		// }
+
+		dy, dx := getDyDx(rune(move))
 		ny, nx := yPos+dy, xPos+dx
 		next := grid[ny][nx]
-		nextFree := next != '#'
-		if next == 'O' {
-			nextFree = moveBoxes(grid, yPos+dy, xPos+dx, rune(moves[i]))
-		}
-		if nextFree {
+		switch next {
+		case '.':
 			yPos, xPos = ny, nx
+		case '[', ']', 'O':
+			if canMove(grid, ny, nx, rune(move)) {
+				moveBoxes(grid, ny, nx, rune(move))
+				yPos, xPos = ny, nx
+			}
 		}
 	}
 
 	for y := 0; y < len(grid); y++ {
 		for x := 0; x < len(grid[y]); x++ {
-			if grid[y][x] == 'O' {
-				a += 100*y + x
+			if grid[y][x] == '[' || grid[y][x] == 'O' {
+				score += 100*y + x
 			}
 		}
 	}
 
-	printGrid(grid, yPos, xPos)
-
-	return
+	return score
 }
 
 func getDyDx(move rune) (int, int) {
@@ -78,25 +122,63 @@ func getDyDx(move rune) (int, int) {
 	case 'v':
 		return 1, 0
 	default:
-		return 0, 0
+		panic("invalid move")
 	}
 }
 
-func moveBoxes(grid [][]rune, yPos int, xPos int, move rune) bool {
-	if grid[yPos][xPos] == '#' {
+func canMove(grid [][]rune, y int, x int, move rune) bool {
+	if grid[y][x] == '#' {
 		return false
 	}
-	if grid[yPos][xPos] == '.' {
+	if grid[y][x] == '.' {
 		return true
 	}
 
 	dy, dx := getDyDx(move)
-	if moveBoxes(grid, yPos+dy, xPos+dx, move) {
-		grid[yPos+dy][xPos+dx] = 'O'
-		grid[yPos][xPos] = '.'
-		return true
+	if move == '<' || move == '>' {
+		return canMove(grid, y+dy, x+dx, move)
+	} else {
+		if grid[y][x] == 'O' {
+			return canMove(grid, y+dy, x+dx, move)
+		} else if grid[y][x] == '[' {
+			moveLeft := canMove(grid, y+dy, x+dx, move)
+			moveRight := canMove(grid, y+dy, x+dx+1, move)
+			return !(!moveLeft || !moveRight)
+		} else if grid[y][x] == ']' {
+			moveLeft := canMove(grid, y+dy, x+dx-1, move)
+			moveRight := canMove(grid, y+dy, x+dx, move)
+			return !(!moveLeft || !moveRight)
+		}
 	}
 	return false
+}
+
+func moveBoxes(grid [][]rune, y int, x int, move rune) {
+	if grid[y][x] == '#' {
+		panic("should not be pushing against wall")
+	}
+	if grid[y][x] == '.' {
+		return
+	}
+
+	dy, dx := getDyDx(move)
+	moveBoxes(grid, y+dy, x+dx, move)
+	if move == '^' || move == 'v' {
+		switch grid[y][x] {
+		case 'O':
+			break
+		case '[':
+			moveBoxes(grid, y+dy, x+dx+1, move)
+			grid[y+dy][x+dx+1] = grid[y][x+1]
+			grid[y][x+1] = '.'
+		case ']':
+			moveBoxes(grid, y+dy, x+dx-1, move)
+			grid[y+dy][x+dx-1] = grid[y][x-1]
+			grid[y][x-1] = '.'
+		}
+	}
+	grid[y+dy][x+dx] = grid[y][x]
+	grid[y][x] = '.'
 }
 
 func printGrid(grid [][]rune, yPos int, xPos int) {
