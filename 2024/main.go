@@ -16,7 +16,7 @@ import (
 	"github.com/martijnjanssen/aoc/2024/day_13"
 	"github.com/martijnjanssen/aoc/2024/day_14"
 	"github.com/martijnjanssen/aoc/2024/day_15"
-	// "github.com/martijnjanssen/aoc/2024/day_16"
+	"github.com/martijnjanssen/aoc/2024/day_16"
 	// "github.com/martijnjanssen/aoc/2024/day_17"
 	// "github.com/martijnjanssen/aoc/2024/day_18"
 	// "github.com/martijnjanssen/aoc/2024/day_19"
@@ -60,7 +60,7 @@ func main() {
 		day_13.GetRunner(),
 		day_14.GetRunner(),
 		day_15.GetRunner(),
-		// day_16.GetRunner(),
+		day_16.GetRunner(),
 		// day_17.GetRunner(),
 		// day_18.GetRunner(),
 		// day_19.GetRunner(),
