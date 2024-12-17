@@ -8,9 +8,8 @@ type bot struct {
 	score     int
 	direction rune
 
-	// inQueue bool
-	scores map[int]int
-	// The index is needed by update and is maintained by the heap.Interface methods.
+	visited string
+
 	index int // The index of the item in the heap.
 }
 

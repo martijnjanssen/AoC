@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"container/heap"
 	"fmt"
+	"strings"
 
-	"github.com/eiannone/keyboard"
 	"github.com/martijnjanssen/aoc/2024/pkg/helper"
 	"github.com/martijnjanssen/aoc/2024/pkg/input"
 	"github.com/martijnjanssen/aoc/2024/pkg/runner"
@@ -18,13 +18,6 @@ func GetRunner() runner.Runner {
 }
 
 func (r *run) Run(buf *bufio.Reader) (a int, b int) {
-	if err := keyboard.Open(); err != nil {
-		panic(err)
-	}
-	defer func() {
-		_ = keyboard.Close()
-	}()
-
 	grid := [][]rune{}
 	sy, sx, ey, ex := -1, -1, -1, -1
 	helper.ReadLines(buf, func(l string) {
@@ -45,61 +38,57 @@ func (r *run) Run(buf *bufio.Reader) (a int, b int) {
 	})
 
 	botScores := map[int]int{}
-	pq := PriorityQueue{&bot{y: sy, x: sx, direction: '>', score: 0, scores: botScores}, &bot{y: sy, x: sx, direction: '^', score: 1000, scores: botScores}}
+	pq := PriorityQueue{&bot{y: sy, x: sx, direction: '>', score: 0, visited: fmt.Sprintf("%d,%d", sy, sx)}}
+	finished := []*bot{}
 	heap.Init(&pq)
 
 	for pq.Len() > 0 {
-		// printGrid(grid, pq, sy, sx, ey, ex)
-		// _, key, _ := keyboard.GetKey()
-		// switch key {
-		// case keyboard.KeyEsc:
-		// 	return
-		// case keyboard.KeyEnter:
-		// }
-
 		rd := heap.Pop(&pq).(*bot)
 
-		// fmt.Printf("%s %d,%d %d\n", string(rd.direction), rd.y, rd.x, rd.score)
-		dy, dx := getDyDx(rd.direction)
-		nScore, ny, nx := rd.score+1, rd.y+dy, rd.x+dx
-		score, ok := rd.scores[getKey(ny, nx)]
-		if ok && score < nScore {
-			continue // Already visited this node, score is better
-		}
-		if ok && score == nScore {
-			continue // Already visited this node, path is equal
-		}
-		switch grid[ny][nx] {
-		case '#':
+		if grid[rd.y][rd.x] == 'E' {
+			finished = append(finished, rd)
 			continue
-		case 'E':
-			rd.scores[getKey(ny, nx)] = nScore
-			pq.Update(rd, nScore)
-			continue
-		case '.':
-			rd.scores[getKey(ny, nx)] = nScore
-			pq.Update(rd, nScore)
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: rd.direction, score: nScore, scores: rd.scores})
 		}
 
-		switch rd.direction {
-		case '^':
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '<', score: nScore + 1000, scores: rd.scores})
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '>', score: nScore + 1000, scores: rd.scores})
-		case '>':
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '^', score: nScore + 1000, scores: rd.scores})
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: 'v', score: nScore + 1000, scores: rd.scores})
-		case '<':
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '^', score: nScore + 1000, scores: rd.scores})
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: 'v', score: nScore + 1000, scores: rd.scores})
-		case 'v':
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '<', score: nScore + 1000, scores: rd.scores})
-			heap.Push(&pq, &bot{y: ny, x: nx, direction: '>', score: nScore + 1000, scores: rd.scores})
+		for _, d := range []rune{'^', 'v', '<', '>'} {
+			dy, dx := getDyDx(d)
+			if grid[rd.y+dy][rd.x+dx] == '#' {
+				continue
+			}
+
+			cdy, cdx := getDyDx(rd.direction)
+			if cdy*-1 == dy && cdx*-1 == dx {
+				continue
+			}
+			nScore := rd.score + 1
+			if d != rd.direction {
+				nScore += 1000
+				botScores[getKey(rd.y, rd.x)] = nScore
+			}
+			score, ok := botScores[getKey(rd.y+dy, rd.x+dx)]
+			if ok && score < rd.score {
+				continue // Already visited this node, score is better
+			}
+			botScores[getKey(rd.y+dy, rd.x+dx)] = nScore
+			v := fmt.Sprintf("%s|%d,%d", rd.visited, rd.y+dy, rd.x+dx)
+
+			heap.Push(&pq, &bot{y: rd.y + dy, x: rd.x + dx, direction: d, score: nScore, visited: v})
+
 		}
 	}
 	a = botScores[getKey(ey, ex)]
 
-	printGrid(grid, pq, sy, sx, ey, ex)
+	count := map[string]bool{}
+	for _, rd := range finished {
+		if rd.score > botScores[getKey(ey, ex)] {
+			continue
+		}
+		for _, v := range strings.Split(rd.visited, "|") {
+			count[v] = true
+		}
+	}
+
+	b = len(count)
 
 	return
 }
@@ -121,28 +110,4 @@ func getDyDx(move rune) (int, int) {
 	default:
 		panic("invalid move")
 	}
-}
-
-func printGrid(grid [][]rune, bots PriorityQueue, sy, sx, ey, ex int) {
-	for y := 0; y < len(grid); y++ {
-		for x := 0; x < len(grid[y]); x++ {
-			hasBot := 0
-			for i := 0; i < len(bots); i++ {
-				if bots[i].y == y && bots[i].x == x {
-					hasBot++
-				}
-			}
-			if hasBot > 0 {
-				fmt.Printf("%d", hasBot)
-			} else if sy == y && sx == x {
-				fmt.Printf("S")
-			} else if ey == y && ex == x {
-				fmt.Printf("E")
-			} else {
-				fmt.Printf("%s", string(grid[y][x]))
-			}
-		}
-		fmt.Println("")
-	}
-	fmt.Println("")
 }
