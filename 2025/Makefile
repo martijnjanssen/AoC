@@ -7,7 +7,7 @@ FILES := $(SRC:.c=)
 all: $(FILES)
 
 %: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -lm -o $@
 
 clean:
 	rm -f $(EXE)
